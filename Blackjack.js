@@ -161,13 +161,13 @@ class Card {
 
 
 if (require.main === module) {
-	var g = new Blackjack(4);
+  var g = new Blackjack(4);
+	
+  while (g.player_hand.value < 21) {
+    console.log(g.hit());
+  }
 
-	while (g.player_hand.value < 21) {
-	  console.log(g.hit());
-	}
-
-	if (g.player_hand.value < 22) {
-	  console.log(g.stand());
-	}
+  if (g.player_hand.value < 22) {
+    console.log(g.stand());
+  }
 }
