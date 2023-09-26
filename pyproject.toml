@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "blackjack"
+version = "0.0.1"
+description = "This is a cli-based blackjack game! Woo!"
+authors = ["Vlek <derek@mccammond.org>"]
+license = "GPLv3"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+rich-click = "^1.6.1"
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.9.1"
+pytest = "^7.4.2"
+coverage = "^7.3.1"
+pre-commit-hooks = "^4.4.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
