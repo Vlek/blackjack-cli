@@ -16,6 +16,23 @@ pytest = "^7.4.2"
 coverage = "^7.3.1"
 pre-commit-hooks = "^4.4.0"
 
+[tool.poetry.scripts]
+hit = "blackjack.console:main"
+
+[tool.coverage.paths]
+source = ["src", "*/site-packages"]
+tests = ["tests", "*/tests"]
+
+[tool.coverage.run]
+parallel = true
+branch = true
+source = ["blackjack"]
+omit = ["tests"]
+
+[tool.coverage.report]
+show_missing = false
+fail_under = 90
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
