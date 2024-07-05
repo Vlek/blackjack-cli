@@ -11,12 +11,39 @@ from enum import Enum
 from typing_extensions import Self
 
 from deck import Deck, Card
-from cardhand import CardHand
+from blackjack.cardhand import CardHand
 
 
 def blackjackScoringStrategy(cards: list[Card]) -> int:
     """Returns the score of a given list of cards."""
-    return 0
+
+    # We do a shallow copy so that we do not mess up the order.
+    cards = cards.copy()
+
+    def aceLastSorting(key: Card) -> int:
+        """Puts aces last in a list of cards when sorting."""
+        if key.value == Card.Value.ACE:
+            return 1
+        return 0
+
+    cards.sort(key=aceLastSorting)
+    # print(f"Cards sorted: {' '.join([str(c.value) for c in cards])}")
+
+    result: int = 0
+
+    for card in cards:
+        if isinstance(card.value.value, int):
+            value: int = card.value.value
+        elif card.value == Card.Value.ACE:
+            if result + 11 > 21:
+                value = 1
+            else:
+                value = 11
+        else:
+            value = 10
+
+        result += value
+    return result
 
 
 class GameState(Enum):
@@ -37,6 +64,9 @@ class Blackjack:
 
         self.playersCards: CardHand = CardHand([self.deck.draw(), self.deck.draw()])
         self.dealersCards: CardHand = CardHand([self.deck.draw(), self.deck.draw()])
+
+        for hand in [self.playersCards, self.dealersCards]:
+            hand.setScoringStrategy(blackjackScoringStrategy)
 
         # If blackjack:
         if self.playersCards.getScore() == 21:
@@ -68,35 +98,34 @@ class Blackjack:
     def performDealersTurn(self) -> Self:
         """Performs the dealer's moves and finishes the game."""
         playersScore: int = self.playersCards.getScore()
+        dealersScore: int = self.dealersCards.getScore()
 
-        if playersScore > 21:
+        # If the player bust or the dealer got blackjack
+        if playersScore > 21 or dealersScore == 21:
+            self.gameState = GameState.Lose
             return self
 
-        # TODO: There's something about the dealer having to try to 17 or something?
-        while playersScore > (dealersScore := self.dealersCards.getScore()):
+        while (dealersScore := self.dealersCards.getScore()) <= 16:
             self._drawCard(self.dealersCards)
 
-        endingDealersScore = self.dealersCards.getScore()
-
-        if endingDealersScore < 22 and endingDealersScore > playersScore:
+        if dealersScore < 22 and playersScore <= dealersScore:
             self.gameState = GameState.Lose
         else:
             self.gameState = GameState.Win
 
         return self
 
-    def _drawCard(self, playerHand: CardHand) -> Card | None:
+    def _drawCard(self, hand: CardHand) -> Card | None:
         """Draws a card and places it into the given hand."""
         newCard: Card | None = self.deck.draw()
-        
+
         if newCard is not None:
-            playerHand.add(newCard)
+            hand.add(newCard)
 
         return newCard
 
     def isGameOver(self) -> bool:
         """Returns whether the game is already over."""
         return self.gameState != GameState.Playing
-
 
     # TODO: Maybe add a todict so that I can serialize and deserialize?

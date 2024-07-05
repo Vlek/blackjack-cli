@@ -27,6 +27,7 @@ class Deck:
     def __init__(self) -> None:
         self.cards: list[Card] = []
         self.isShuffled = False
+        self.__add_cards()
 
     def shuffle(self) -> Self:
         """Returns the deck of cards shuffled."""
@@ -60,5 +61,13 @@ class Deck:
     def __mul__(self, num: int) -> Self:
         """Duplicates the cards in the deck num times."""
         self.cards *= num
+
+        return self
+
+    def __add_cards(self) -> Self:
+        """Adds initial cards to the deck."""
+        for suit in Card.Suit:
+            for value in Card.Value:
+                self.cards.append(Card(suit, value))
 
         return self

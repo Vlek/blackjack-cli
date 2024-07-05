@@ -9,6 +9,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.10"
 rich-click = "^1.6.1"
+pyyaml = "^6.0.1"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.9.1"
@@ -17,7 +18,11 @@ coverage = "^7.3.1"
 pre-commit-hooks = "^4.4.0"
 
 [tool.poetry.scripts]
-hit = "blackjack.console:main"
+blackjack = "blackjack.console:bj"
+bj = "blackjack.console:bj"
+hit = "blackjack.console:hit"
+stand = "blackjack.console:stand"
+stats = "blackjack.console:stats"
 
 [tool.coverage.paths]
 source = ["src", "*/site-packages"]

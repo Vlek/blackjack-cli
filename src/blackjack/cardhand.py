@@ -31,3 +31,7 @@ class CardHand:
         if card is not None:
             self.cards.append(card)
         return self
+
+    def __str__(self) -> str:
+        """Returns string representation of the cardhand."""
+        return " ".join(str(c) for c in self.cards)
