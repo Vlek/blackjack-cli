@@ -57,7 +57,7 @@ class Deck:
         """Returns the number of cards in the deck."""
         return len(self.cards)
 
-    def __mult__(self, num: int) -> Self:
+    def __mul__(self, num: int) -> Self:
         """Duplicates the cards in the deck num times."""
         self.cards *= num
 
