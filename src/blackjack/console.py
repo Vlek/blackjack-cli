@@ -38,7 +38,7 @@ def bj() -> None:
 
 @bj.command()
 def hit() -> None:
-    """Asks dealer for another card."""
+    """Starts new game or asks dealer for another card."""
     gameState: GameState = game_instance.gameState
 
     if not isNewGame:
@@ -141,9 +141,13 @@ def __get_sass(
     responseBank: list[str]
 
     loseResponseBank: list[str] = [
+        "Play again?",
         "The house always wins!",
         "Maybe next time.",
         "💩",
+        "Tough luck.",
+        "Womp womp",
+        "You can turn it around next time.",
     ]
 
     winResponseBank: list[str] = [
@@ -155,6 +159,14 @@ def __get_sass(
         "🔥",
     ]
 
+    pushResponseBank: list[str] = [
+        "Draw!",
+        "Alright, we will call it a draw.",
+        "Maybe you'll win next time?",
+        "Give it another shot.",
+        "Maybe next time.",
+    ]
+
     # This is before the streak is incremented in the stats, so what is saved
     # is our previous streak. Need to increment to include current win/lose
     currentStreak += 1
@@ -162,12 +174,16 @@ def __get_sass(
     # If a streak continues
     if gameState == lastGameOutcome:
         # Winning streak continues
-        if gameState == GameState.Win:
+        if gameState in [GameState.Win, GameState.Blackjack]:
             responseBank = [
                 f"Continuing the winning streak to {currentStreak}!",
                 f"{currentStreak} times a winner!",
                 f"Will you lose after winning {currentStreak} times?",
             ] + winResponseBank
+        elif gameState == GameState.Push:
+            responseBank = [
+                f"{currentStreak} pushes? That's rare.",
+            ] + pushResponseBank
         # Losing streak continues.
         # Here's where the real sass is!
         else:
@@ -177,11 +193,21 @@ def __get_sass(
             ] + loseResponseBank
 
     # A losing streak was broken
-    elif gameState == GameState.Win:
-        responseBank = [] + winResponseBank
+    elif gameState in [GameState.Win, GameState.Blackjack]:
+        responseBank = [
+            "You broke your losing streak!",
+            f"Losing streak of {currentStreak} broken!",
+            "Now to turn this into a winning streak!",
+        ] + winResponseBank
+
+    elif gameState == GameState.Push:
+        responseBank = pushResponseBank
 
     # A winning streak was broken
     else:
-        responseBank = [] + loseResponseBank
+        responseBank = [
+            "Wining streak broken!",
+            "Will this lead to a losing streak?",
+        ] + loseResponseBank
 
     return choice(responseBank)

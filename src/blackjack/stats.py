@@ -32,6 +32,8 @@ class Stats:
 
                     if self.data._longest_win_streak < self.data._current_streak:
                         self.data._longest_win_streak = self.data._current_streak
+                else:
+                    self.data._current_streak = 1
 
             case GameState.Lose:
                 self.data._losses += 1
@@ -41,9 +43,20 @@ class Stats:
 
                     if self.data._longested_losing_streak < self.data._current_streak:
                         self.data._longested_losing_streak = self.data._current_streak
+                else:
+                    self.data._current_streak = 1
 
             case GameState.Push:
                 self.data._pushes += 1
+                self.data._current_streak = 0
+
+                if self.data._last_outcome == GameState.Push:
+                    self.data._current_streak += 1
+
+                    if self.data._longest_push_streak < self.data._current_streak:
+                        self.data._longest_push_streak = self.data._current_streak
+                else:
+                    self.data._current_streak = 1
 
         self.data._last_outcome = gameState
 

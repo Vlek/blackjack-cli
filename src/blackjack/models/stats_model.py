@@ -10,6 +10,7 @@ class BlackjackStats:
     _blackjacks: int = 0
     _longest_win_streak: int = 0
     _longested_losing_streak: int = 0
+    _longest_push_streak: int = 0
     _current_streak: int = 0
     _last_outcome: GameState = GameState.Playing
     _last_played: str = ""
@@ -47,6 +48,7 @@ class BlackjackStats:
             "_blackjacks": "Blackjacks",
             "_longest_win_streak": "Longest winning streak",
             "_longested_losing_streak": "Longest losing streak",
+            "_longest_push_streak": "Longest push streak",
             "_current_streak": "Current streak",
             "_last_played": "Last played",
         }
