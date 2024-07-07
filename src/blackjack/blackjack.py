@@ -27,7 +27,6 @@ def blackjackScoringStrategy(cards: list[Card]) -> int:
         return 0
 
     cards.sort(key=aceLastSorting)
-    # print(f"Cards sorted: {' '.join([str(c.value) for c in cards])}")
 
     result: int = 0
 
@@ -47,10 +46,11 @@ def blackjackScoringStrategy(cards: list[Card]) -> int:
 
 
 class GameState(Enum):
-    Playing = 0
-    Win = 1
-    Lose = 2
-    Blackjack = 3
+    Playing = "playing"
+    Win = "wins"
+    Lose = "losses"
+    Blackjack = "blackjacks"
+    Push = "pushes"
 
 
 class Blackjack:
@@ -68,9 +68,15 @@ class Blackjack:
         for hand in [self.playersCards, self.dealersCards]:
             hand.setScoringStrategy(blackjackScoringStrategy)
 
-        # If blackjack:
-        if self.playersCards.getScore() == 21:
+        playersScore: int = self.playersCards.getScore()
+        dealersScore: int = self.dealersCards.getScore()
+
+        # If one or both blackjack:
+        if playersScore == 21:
             self.gameState = GameState.Blackjack
+
+            if dealersScore == 21:
+                self.gameState = GameState.Push
 
     def hit(self) -> GameState:
         # TODO, maybe this should be a decorator so that these can only be done
@@ -108,10 +114,15 @@ class Blackjack:
         while (dealersScore := self.dealersCards.getScore()) <= 16:
             self._drawCard(self.dealersCards)
 
-        if dealersScore < 22 and playersScore <= dealersScore:
-            self.gameState = GameState.Lose
-        else:
+        dealersScore = self.dealersCards.getScore()
+
+        if playersScore > dealersScore or dealersScore > 21:
             self.gameState = GameState.Win
+        else:
+            if playersScore == dealersScore:
+                self.gameState = GameState.Push
+            else:
+                self.gameState = GameState.Lose
 
         return self
 
@@ -127,5 +138,3 @@ class Blackjack:
     def isGameOver(self) -> bool:
         """Returns whether the game is already over."""
         return self.gameState != GameState.Playing
-
-    # TODO: Maybe add a todict so that I can serialize and deserialize?
