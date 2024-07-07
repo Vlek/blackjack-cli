@@ -73,12 +73,9 @@ def stand() -> None:
 @bj.command()
 def stats() -> None:
     """Lists the player's game statistics."""
-    statList = playerStats.list
-
     click.echo("Player stats:")
 
-    for stat, value in statList.items():
-        click.echo(f"   {stat}: {value}")
+    click.echo(playerStats.data)
 
 
 def __save_state(filepath: Path, gameData: Blackjack) -> None:
@@ -97,15 +94,13 @@ def __print_end_of_game(game: Blackjack) -> None:
         case GameState.Push:
             result_text = "Push"
 
-    previousGameState: GameState = (
-        GameState.Win if playerStats.list["last outcome"] == "win" else GameState.Lose
-    )
-    currentStreak: object = playerStats.list["current streak"]
+    previousGameState: GameState = playerStats.data._last_outcome
+    currentStreak: int = playerStats.data._current_streak
 
     sass: str = __get_sass(
         game.gameState,
         previousGameState,
-        currentStreak if isinstance(currentStreak, int) else 0,
+        currentStreak,
     )
 
     click.echo(

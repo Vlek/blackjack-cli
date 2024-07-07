@@ -1,93 +1,51 @@
 from pathlib import Path
 import json
 from datetime import date
-from typing import Any
 
 from blackjack.blackjack import GameState
+from blackjack.models import BlackjackStats
 
 
 class Stats:
-    structure: dict[str, Any] = {
-        "wins": 0,
-        "losses": 0,
-        "pushes": 0,
-        "blackjacks": 0,
-        "longest winning streak": 0,
-        "longest losing streak": 0,
-        "last played": None,
-        "last outcome": None,
-        "current streak": 0,
-    }
-
     def __init__(self, statsFilePath: Path) -> None:
         """Initializes a stats collection object."""
 
-        self.list: dict[str, object] = Stats.structure
+        self.data: BlackjackStats = BlackjackStats()
 
         if statsFilePath.exists():
             with open(statsFilePath, "r") as statsFile:
-                self.list = json.load(statsFile)
+                self.data.deserialize(json.load(statsFile))
 
     def save(self, statsFilePath: Path, gameState: GameState) -> None:
         """Saves the last game's state to the stats file."""
-        self.list["last played"] = str(date.today())
-
-        lastOutcome: str = ""
-        if isinstance(self.list["last outcome"], str):
-            lastOutcome = self.list["last outcome"]
+        self.data._last_played = str(date.today())
 
         match gameState:
             case winType if winType in [GameState.Win, GameState.Blackjack]:
                 if winType == GameState.Win:
-                    if isinstance(self.list["wins"], int):
-                        self.list["wins"] += 1
+                    self.data._wins += 1
                 else:
-                    if isinstance(self.list["blackjacks"], int):
-                        self.list["blackjacks"] += 1
+                    self.data._blackjacks += 1
 
-                if isinstance(self.list["current streak"], int):
-                    if lastOutcome == "win":
-                        self.list["current streak"] += 1
-                        if (
-                            isinstance(
-                                longestWinStreak := self.list["longest winning streak"],
-                                int,
-                            )
-                            and longestWinStreak < self.list["current streak"]
-                        ):
-                            self.list["longest winning streak"] = self.list[
-                                "current streak"
-                            ]
-                    else:
-                        self.list["current streak"] = 1
+                if self.data._last_outcome in [GameState.Win, GameState.Blackjack]:
+                    self.data._current_streak += 1
 
-                self.list["last outcome"] = "win"
+                    if self.data._longest_win_streak < self.data._current_streak:
+                        self.data._longest_win_streak = self.data._current_streak
 
             case GameState.Lose:
-                if isinstance(self.list["losses"], int):
-                    self.list["losses"] += 1
+                self.data._losses += 1
 
-                if isinstance(self.list["current streak"], int):
-                    if lastOutcome == "lose":
-                        self.list["current streak"] += 1
-                        if (
-                            isinstance(
-                                longestLoseStreak := self.list["longest losing streak"],
-                                int,
-                            )
-                            and longestLoseStreak < self.list["current streak"]
-                        ):
-                            self.list["longest losing streak"] = self.list[
-                                "current streak"
-                            ]
-                    else:
-                        self.list["current streak"] = 1
+                if self.data._last_outcome == GameState.Lose:
+                    self.data._current_streak += 1
 
-                self.list["last outcome"] = "lose"
+                    if self.data._longested_losing_streak < self.data._current_streak:
+                        self.data._longested_losing_streak = self.data._current_streak
 
             case GameState.Push:
-                if isinstance(self.list["pushes"], int):
-                    self.list["pushes"] += 1
+                self.data._pushes += 1
+
+        self.data._last_outcome = gameState
 
         with open(statsFilePath, "w") as statsFile:
-            json.dump(self.list, statsFile)
+            json.dump(self.data.serialize(), statsFile)
