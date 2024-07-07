@@ -10,8 +10,7 @@ This is going to house things like:
 from enum import Enum
 from typing_extensions import Self
 
-from deck import Deck, Card
-from blackjack.cardhand import CardHand
+from deck import Deck, Card, CardHand
 
 
 def blackjackScoringStrategy(cards: list[Card]) -> int:

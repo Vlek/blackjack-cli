@@ -11,7 +11,7 @@ from blackjack.blackjack import Blackjack, GameState
 from blackjack.config import Config
 from blackjack.stats import Stats
 
-from blackjack.cardhand import CardHand
+from deck import CardHand
 
 
 config = Config()
@@ -124,9 +124,7 @@ def __get_hands_string(
         dealersCards = str(dealerHand)
         dealersScore = __get_score_string(dealerHand)
 
-    return (
-        f"Player: {playerHand} ({playerHand}). House: {dealersCards} ({dealersScore})."
-    )
+    return f"Player: {playerHand} ({playerHand.getScore()}). House: {dealersCards} ({dealersScore})."
 
 
 def __get_score_string(hand: CardHand) -> str:
