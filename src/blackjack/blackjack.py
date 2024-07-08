@@ -78,8 +78,6 @@ class Blackjack:
                 self.gameState = GameState.Push
 
     def hit(self) -> GameState:
-        # TODO, maybe this should be a decorator so that these can only be done
-        #    if game is still not over?
         if self.isGameOver():
             return self.gameState
 
