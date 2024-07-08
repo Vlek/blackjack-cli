@@ -1,5 +1,5 @@
 from typing import Any
-from blackjack.blackjack import GameState
+from blackjack_cli.blackjack import GameState
 from typing_extensions import Self
 
 

@@ -8,7 +8,6 @@ If people wish to then save these settings and use them across different
 PCs, they should have that option.
 """
 
-import logging
 from pathlib import Path
 from click import get_app_dir
 
