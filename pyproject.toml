@@ -1,6 +1,6 @@
 [tool.poetry]
-name = "blackjack"
-version = "0.1.0"
+name = "blackjack-cli"
+version = "0.2.0"
 description = "This is a cli-based blackjack game! Woo!"
 authors = ["Vlek <derek@mccammond.org>"]
 license = "GPLv3"
