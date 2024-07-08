@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "blackjack-cli"
-version = "0.2.0"
+version = "0.3.1"
 description = "This is a cli-based blackjack game! Woo!"
 authors = ["Vlek <derek@mccammond.org>"]
 license = "GPLv3"
@@ -14,16 +14,15 @@ pyyaml = "^6.0.1"
 [tool.poetry.group.dev.dependencies]
 black = "^24.4.2"
 pytest = "^8.2.2"
-
 coverage = "^7.3.1"
 pre-commit-hooks = "^4.4.0"
 
 [tool.poetry.scripts]
-blackjack = "blackjack.console:bj"
-bj = "blackjack.console:bj"
-hit = "blackjack.console:hit"
-stand = "blackjack.console:stand"
-stay = "blackjack.console:stand"
+blackjack = "blackjack-cli.console:bj"
+bj = "blackjack-cli.console:bj"
+hit = "blackjack-cli.console:hit"
+stand = "blackjack-cli.console:stand"
+stay = "blackjack-cli.console:stand"
 
 [tool.coverage.paths]
 source = ["src", "*/site-packages"]
@@ -32,7 +31,7 @@ tests = ["tests", "*/tests"]
 [tool.coverage.run]
 parallel = true
 branch = true
-source = ["blackjack"]
+source = ["blackjack-cli"]
 omit = ["tests"]
 
 [tool.coverage.report]
