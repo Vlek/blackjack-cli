@@ -7,9 +7,9 @@ import pickle
 from pathlib import Path
 from random import choice
 
-from blackjack.blackjack import Blackjack, GameState
-from blackjack.config import Config
-from blackjack.stats import Stats
+from blackjack_cli.blackjack import Blackjack, GameState
+from blackjack_cli.config import Config
+from blackjack_cli.stats import Stats
 
 from deck import CardHand
 

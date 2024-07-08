@@ -18,11 +18,11 @@ coverage = "^7.3.1"
 pre-commit-hooks = "^4.4.0"
 
 [tool.poetry.scripts]
-blackjack = "blackjack-cli.console:bj"
-bj = "blackjack-cli.console:bj"
-hit = "blackjack-cli.console:hit"
-stand = "blackjack-cli.console:stand"
-stay = "blackjack-cli.console:stand"
+blackjack = "blackjack_cli.console:bj"
+bj = "blackjack_cli.console:bj"
+hit = "blackjack_cli.console:hit"
+stand = "blackjack_cli.console:stand"
+stay = "blackjack_cli.console:stand"
 
 [tool.coverage.paths]
 source = ["src", "*/site-packages"]

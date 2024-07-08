@@ -2,8 +2,8 @@ from pathlib import Path
 import json
 from datetime import date
 
-from blackjack.blackjack import GameState
-from blackjack.models import BlackjackStats
+from blackjack_cli.blackjack import GameState
+from blackjack_cli.models import BlackjackStats
 
 
 class Stats:
