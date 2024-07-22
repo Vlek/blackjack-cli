@@ -1,10 +1,11 @@
 [tool.poetry]
 name = "blackjack-cli"
-version = "1.0.0"
+version = "1.0.1"
 description = "This is a cli-based blackjack game! Woo!"
 authors = ["Vlek <derek@mccammond.org>"]
 license = "GPLv3"
 readme = "README.md"
+packages = [{include="*", from="src"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
