@@ -31,7 +31,7 @@ class Config:
         self.config_folder_path: Path = self.config_file_path.parent
 
         if not self.config_folder_path.exists():
-            self.config_folder_path.mkdir()
+            self.config_folder_path.mkdir(parents=True)
 
         if self.config_file_path.exists():
             with self.config_file_path.open() as config_file:
