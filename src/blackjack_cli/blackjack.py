@@ -8,9 +8,10 @@ This is going to house things like:
 """
 
 from enum import Enum
+
 from typing_extensions import Self
 
-from deck import Deck, Card, CardHand
+from deck import Card, CardHand, Deck
 
 
 def blackjackScoringStrategy(cards: list[Card]) -> int:
@@ -113,13 +114,12 @@ class Blackjack:
 
         dealersScore = self.dealersCards.getScore()
 
-        if playersScore > dealersScore or dealersScore > 21:
+        if playersScore == dealersScore:
+            self.gameState = GameState.Push
+        elif playersScore > dealersScore or dealersScore > 21:
             self.gameState = GameState.Win
         else:
-            if playersScore == dealersScore:
-                self.gameState = GameState.Push
-            else:
-                self.gameState = GameState.Lose
+            self.gameState = GameState.Lose
 
         return self
 

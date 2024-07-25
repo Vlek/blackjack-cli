@@ -3,15 +3,20 @@ This deals with holding and evaluating cards that
 a player has in their hand.
 """
 
-from deck import Card
+from typing import Callable
+
 from typing_extensions import Self
 
-from typing import Callable
+from deck import Card
 
 
 class CardHand:
 
-    def __init__(self, cards: list[Card | None], scoringStrategy: Callable[[list[Card]], int] = lambda x: -1) -> None:
+    def __init__(
+        self,
+        cards: list[Card | None],
+        scoringStrategy: Callable[[list[Card]], int] = lambda x: -1,
+    ) -> None:
         """Initializes a cardhand."""
 
         self.cards: list[Card] = [c for c in cards if c is not None]
@@ -35,3 +40,7 @@ class CardHand:
     def __str__(self) -> str:
         """Returns string representation of the cardhand."""
         return " ".join(str(c) for c in self.cards)
+
+    def __len__(self) -> int:
+        """Returns the length of a given hand."""
+        return len(self.cards)
