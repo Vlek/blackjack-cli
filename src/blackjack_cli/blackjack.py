@@ -101,27 +101,26 @@ class Blackjack:
 
     def performDealersTurn(self) -> Self:
         """Performs the dealer's moves and finishes the game."""
+        while self.dealersCards.getScore() <= 16:
+            self._drawCard(self.dealersCards)
+
+        self._calcGameState()
+
+        return self
+
+    def _calcGameState(self) -> None:
+        """Based on current cards, calculates the gamestate."""
         playersScore: int = self.playersCards.getScore()
         dealersScore: int = self.dealersCards.getScore()
 
-        # If the player bust or the dealer got blackjack
-        if playersScore > 21 or dealersScore == 21:
+        if playersScore > 21:
             self.gameState = GameState.Lose
-            return self
-
-        while (dealersScore := self.dealersCards.getScore()) <= 16:
-            self._drawCard(self.dealersCards)
-
-        dealersScore = self.dealersCards.getScore()
-
-        if playersScore == dealersScore:
+        elif playersScore == dealersScore:
             self.gameState = GameState.Push
         elif playersScore > dealersScore or dealersScore > 21:
             self.gameState = GameState.Win
         else:
             self.gameState = GameState.Lose
-
-        return self
 
     def _drawCard(self, hand: CardHand) -> Card | None:
         """Draws a card and places it into the given hand."""
