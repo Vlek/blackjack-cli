@@ -20,7 +20,7 @@ pyyaml = "^6.0.1"
 black = "^24.4.2"
 pytest = "^8.2.2"
 coverage = "^7.3.1"
-pre-commit-hooks = "^4.4.0"
+pre-commit-hooks = ">=4.4,<6.0"
 
 [tool.poetry.scripts]
 blackjack = "blackjack_cli.console:bj"
