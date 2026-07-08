@@ -3,9 +3,7 @@ This deals with holding and evaluating cards that
 a player has in their hand.
 """
 
-from typing import Callable
-
-from typing_extensions import Self
+from typing import Callable, Self
 
 from deck import Card
 

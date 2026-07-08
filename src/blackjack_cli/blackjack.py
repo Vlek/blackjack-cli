@@ -8,8 +8,7 @@ This is going to house things like:
 """
 
 from enum import Enum
-
-from typing_extensions import Self
+from typing import Self
 
 from deck import Card, CardHand, Deck
 
