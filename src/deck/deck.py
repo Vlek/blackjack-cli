@@ -18,9 +18,10 @@ We have 52 cards:
         1 Ace
 """
 
-from deck import Card
-from typing_extensions import Self
 from random import randint
+from typing import Self
+
+from deck import Card
 
 
 class Deck:
