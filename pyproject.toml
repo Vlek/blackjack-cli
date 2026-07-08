@@ -34,7 +34,7 @@ dev = [
     "black>=26.5.1,<27",
     "pytest>=8.2.2,<9",
     "coverage>=7.3.1,<8",
-    "pre-commit-hooks>=4.4,<6.0",
+    "pre-commit-hooks>=4.4,<7.0",
     "pyupgrade>=3.21.2",
 ]
 
