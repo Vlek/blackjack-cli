@@ -56,15 +56,15 @@ jobs:
           with open(os.environ["GITHUB_ENV"], mode="a") as io:
               print(f"VIRTUALENV_PIP={pip.__version__}", file=io)
 
-      - name: Install Poetry
+      - name: Install uv
         run: |
-          pipx install --pip-args=--constraint=.github/workflows/constraints.txt poetry
-          poetry --version
+          pipx install --pip-args=--constraint=.github/workflows/constraints.txt uv
+          uv --version
 
       - name: Install Nox
         run: |
           pipx install --pip-args=--constraint=.github/workflows/constraints.txt nox
-          pipx inject --pip-args=--constraint=.github/workflows/constraints.txt nox nox-poetry
+          pipx inject --pip-args=--constraint=.github/workflows/constraints.txt nox nox-uv
           nox --version
 
       - name: Compute pre-commit cache key
@@ -97,14 +97,14 @@ jobs:
 
       - name: Upload coverage data
         if: always() && matrix.session == 'tests'
-        uses: "actions/upload-artifact@v4.4.3"
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-data
           path: ".coverage.*"
 
       - name: Upload documentation
         if: matrix.session == 'docs-build'
-        uses: actions/upload-artifact@v4.4.3
+        uses: actions/upload-artifact@v7
         with:
           name: docs
           path: docs/_build
@@ -119,22 +119,17 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v6.3.0
         with:
-          python-version: "3.10"
+          python-version: "3.12"
 
-      - name: Upgrade pip
+      - name: Install uv
         run: |
-          pip install --constraint=.github/workflows/constraints.txt pip
-          pip --version
-
-      - name: Install Poetry
-        run: |
-          pipx install --pip-args=--constraint=.github/workflows/constraints.txt poetry
-          poetry --version
+          pipx install --pip-args=--constraint=.github/workflows/constraints.txt uv
+          uv --version
 
       - name: Install Nox
         run: |
           pipx install --pip-args=--constraint=.github/workflows/constraints.txt nox
-          pipx inject --pip-args=--constraint=.github/workflows/constraints.txt nox nox-poetry
+          pipx inject --pip-args=--constraint=.github/workflows/constraints.txt nox nox-uv
           nox --version
 
       - name: Download coverage data
@@ -151,4 +146,4 @@ jobs:
           nox --force-color --session=coverage -- xml
 
       - name: Upload coverage report
-        uses: codecov/codecov-action@v4.6.0
+        uses: codecov/codecov-action@v7
