@@ -1,6 +1,6 @@
 [project]
 name = "blackjack-cli"
-version = "1.2.0"
+version = "1.3.0"
 description = "This is a cli-based blackjack game! Woo!"
 authors = [{ name = "Vlek", email = "derek@mccammond.org" }]
 requires-python = ">=3.10,<4"
