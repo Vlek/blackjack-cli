@@ -21,8 +21,8 @@ jobs:
           # - { python: "3.10", os: "ubuntu-latest", session: "typeguard" }
 
           - { python: "3.12", os: "ubuntu-latest", session: "tests" }
-          - { python: "3.12", os: "windows-latest", session: "tests" }
-          - { python: "3.12", os: "macos-latest", session: "tests" }
+          # - { python: "3.12", os: "windows-latest", session: "tests" }
+          # - { python: "3.12", os: "macos-latest", session: "tests" }
 
           # Perform tests in older versions of python
           # - { python: "3.11", os: "ubuntu-latest", session: "tests" }
@@ -58,18 +58,10 @@ jobs:
       - name: Install project
         run: uv sync --locked --all-extras --dev
 
-      - name: Download coverage data
-        uses: actions/download-artifact@v8.0.1
-        with:
-          name: coverage-data
-
-      - name: Combine coverage data and display human readable report
+      - name: Run coverage
         run: |
           uv run coverage -m pytest tests
 
-      - name: Create coverage report
-        run: |
-          uv run coverage xml
-
-      - name: Upload coverage report
-        uses: codecov/codecov-action@v7
+      # - name: Create coverage report
+      #   run: |
+      #     uv run coverage xml
