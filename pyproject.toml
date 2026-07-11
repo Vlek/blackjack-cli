@@ -1,6 +1,6 @@
 [project]
 name = "blackjack-cli"
-version = "1.1.0"
+version = "1.2.0"
 description = "This is a cli-based blackjack game! Woo!"
 authors = [{ name = "Vlek", email = "derek@mccammond.org" }]
 requires-python = ">=3.10,<4"
@@ -74,12 +74,7 @@ tests = ["tests", "*/tests"]
 [tool.coverage.run]
 parallel = true
 branch = true
-source = ["blackjack-cli"]
-omit = ["tests"]
-
-[tool.coverage.report]
-show_missing = false
-fail_under = 90
+source = ["src/blackjack_cli", "src/deck"]
 
 [flake8]
 max-line-length = 88

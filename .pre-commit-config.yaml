@@ -42,7 +42,6 @@ repos:
         args: [--py37-plus]
       - id: reorder-python-imports
         name: Reorder python imports
-        #entry: reorder-python-imports
         entry: isort
         language: system
         types: [python]
