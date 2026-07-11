@@ -41,6 +41,12 @@ dev = [
 [tool.uv]
 default-groups = "all"
 
+[[tool.uv.index]]
+name = "testpypi"
+url = "https://test.pypi.org/simple"
+pubish-url = "https://test.pypi.org/legacy"
+explicit = true
+
 [tool.hatch.build.targets.sdist]
 include = [
     "src/blackjack_cli",

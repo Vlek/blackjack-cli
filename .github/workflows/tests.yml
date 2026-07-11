@@ -42,6 +42,11 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
 
+      - name: Install uv
+        run: |
+          pipx install --pip-args=--constraint=.github/workflows/constraints.txt uv
+          uv --version
+
       - name: Upgrade pip
         run: |
           pip install --constraint=.github/workflows/constraints.txt pip
@@ -56,15 +61,10 @@ jobs:
           with open(os.environ["GITHUB_ENV"], mode="a") as io:
               print(f"VIRTUALENV_PIP={pip.__version__}", file=io)
 
-      - name: Install uv
-        run: |
-          pipx install --pip-args=--constraint=.github/workflows/constraints.txt uv
-          uv --version
-
       - name: Install Nox
         run: |
           pipx install --pip-args=--constraint=.github/workflows/constraints.txt nox
-          pipx inject --pip-args=--constraint=.github/workflows/constraints.txt nox nox-uv
+          pipx inject --pip-args=--constraint=.github/workflows/constraints.txt nox
           nox --version
 
       - name: Compute pre-commit cache key
@@ -129,7 +129,7 @@ jobs:
       - name: Install Nox
         run: |
           pipx install --pip-args=--constraint=.github/workflows/constraints.txt nox
-          pipx inject --pip-args=--constraint=.github/workflows/constraints.txt nox nox-uv
+          pipx inject --pip-args=--constraint=.github/workflows/constraints.txt nox
           nox --version
 
       - name: Download coverage data

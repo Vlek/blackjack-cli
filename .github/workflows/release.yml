@@ -28,6 +28,7 @@ jobs:
         run: |
           echo "::set-output name=sha::$(git rev-parse --verify --quiet HEAD^)"
 
+      # TODO: Should we throw an exception here if there's no parent commit?
       # - name: Detect and tag new version
       #   id: check-version
       #   if: steps.check-parent-commit.outputs.sha
@@ -35,13 +36,17 @@ jobs:
       #   with:
       #     version-command: |
       #       bash -o pipefail -c "poetry version | awk '{ print \$2 }'"
-      #
-      # - name: Bump version for developmental release
-      #   if: "! steps.check-version.outputs.tag"
-      #   run: |
-      #     poetry version patch &&
-      #     version=$(poetry version | awk '{ print $2 }') &&
-      #     poetry version $version.dev.$(date +%s)
+      - name: Detect and tag new version
+        id: check-version
+        if: steps.check-parent-commit.outputs.sha
+        # get current version
+        # get previous version
+        # if current version != previous version,
+        #   form version tag
+        #   if version tag does not exist in repo,
+        #     tag release
+        #   else
+        #     throw exception(?)
 
       - name: Build package
         run: uv build
@@ -50,17 +55,16 @@ jobs:
         # if: steps.check-version.outputs.tag
         run: uv publish --token ${{ secrets.PYPI_TOKEN }}
 
+      # - name: Bump version for developmental release
+      #   if: "! steps.check-version.outputs.tag"
+      #   run: uv version --bump patch --bump dev=$(date +%s)
+
       # - name: Publish package on TestPyPI
       #   if: "! steps.check-version.outputs.tag"
-      #   run: uv publish --token ${{ secrets.TEST_PYPI_TOKEN }}
-      #   with:
-      #     user: __token__
-      #     password:
-      #     repository_url: https://test.pypi.org/legacy/
-      #
+      #   run: uv publish --token ${{ secrets.TEST_PYPI_TOKEN }} --index testpypi
 
       - name: Publish the release notes
-        uses: release-drafter/release-drafter@v7.5.1
+        uses: release-drafter/release-drafter@v7
         with:
           publish: ${{ steps.check-version.outputs.tag != '' }}
           tag: ${{ steps.check-version.outputs.tag }}
