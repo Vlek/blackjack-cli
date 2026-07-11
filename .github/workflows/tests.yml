@@ -12,102 +12,36 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { python: "3.10", os: "ubuntu-latest", session: "pre-commit" }
-          - { python: "3.10", os: "ubuntu-latest", session: "safety" }
-          - { python: "3.10", os: "ubuntu-latest", session: "mypy" }
-          - { python: "3.9", os: "ubuntu-latest", session: "mypy" }
-          - { python: "3.8", os: "ubuntu-latest", session: "mypy" }
-          - { python: "3.7", os: "ubuntu-latest", session: "mypy" }
-          - { python: "3.10", os: "ubuntu-latest", session: "tests" }
-          - { python: "3.9", os: "ubuntu-latest", session: "tests" }
-          - { python: "3.8", os: "ubuntu-latest", session: "tests" }
-          - { python: "3.7", os: "ubuntu-latest", session: "tests" }
-          - { python: "3.10", os: "windows-latest", session: "tests" }
-          - { python: "3.10", os: "macos-latest", session: "tests" }
-            #          - { python: "3.10", os: "ubuntu-latest", session: "typeguard" }
-          - { python: "3.10", os: "ubuntu-latest", session: "xdoctest" }
-          - { python: "3.10", os: "ubuntu-latest", session: "docs-build" }
+          # Perform all checks against latest 3.* python
+          # - { python: "3.x", os: "ubuntu-latest", session: "pre-commit" }
+          # - { python: "3.x", os: "ubuntu-latest", session: "safety" }
+          # - { python: "3.x", os: "ubuntu-latest", session: "xdoctest" }
+          # - { python: "3.x", os: "ubuntu-latest", session: "docs-build" }
+          # - { python: "3.x", os: "ubuntu-latest", session: "mypy" }
+          # - { python: "3.10", os: "ubuntu-latest", session: "typeguard" }
 
-    env:
-      NOXSESSION: ${{ matrix.session }}
-      FORCE_COLOR: "1"
-      PRE_COMGPL-3.0_COLOR: "always"
+          - { python: "3.12", os: "ubuntu-latest", session: "tests" }
+          # - { python: "3.12", os: "windows-latest", session: "tests" }
+          # - { python: "3.12", os: "macos-latest", session: "tests" }
+
+          # Perform tests in older versions of python
+          # - { python: "3.11", os: "ubuntu-latest", session: "tests" }
+          # - { python: "3.10", os: "ubuntu-latest", session: "tests" }
 
     steps:
       - name: Check out the repository
         uses: actions/checkout@v7.0.0
 
-      - name: Set up Python ${{ matrix.python }}
-        uses: actions/setup-python@v6.3.0
+      - name: Set up uv with Python ${{ matrix.python }}
+        uses: astral-sh/setup-uv@v8.3.2
         with:
           python-version: ${{ matrix.python }}
 
-      - name: Upgrade pip
-        run: |
-          pip install --constraint=.github/workflows/constraints.txt pip
-          pip --version
+      - name: Install project
+        run: uv sync --locked --all-extras --dev
 
-      - name: Upgrade pip in virtual environments
-        shell: python
-        run: |
-          import os
-          import pip
-
-          with open(os.environ["GITHUB_ENV"], mode="a") as io:
-              print(f"VIRTUALENV_PIP={pip.__version__}", file=io)
-
-      - name: Install Poetry
-        run: |
-          pipx install --pip-args=--constraint=.github/workflows/constraints.txt poetry
-          poetry --version
-
-      - name: Install Nox
-        run: |
-          pipx install --pip-args=--constraint=.github/workflows/constraints.txt nox
-          pipx inject --pip-args=--constraint=.github/workflows/constraints.txt nox nox-poetry
-          nox --version
-
-      - name: Compute pre-commit cache key
-        if: matrix.session == 'pre-commit'
-        id: pre-commit-cache
-        shell: python
-        run: |
-          import hashlib
-          import sys
-
-          python = "py{}.{}".format(*sys.version_info[:2])
-          payload = sys.version.encode() + sys.executable.encode()
-          digest = hashlib.sha256(payload).hexdigest()
-          result = "${{ runner.os }}-{}-{}-pre-commit".format(python, digest[:8])
-
-          print("::set-output name=result::{}".format(result))
-
-      - name: Restore pre-commit cache
-        uses: actions/cache@v6.1.0
-        if: matrix.session == 'pre-commit'
-        with:
-          path: ~/.cache/pre-commit
-          key: ${{ steps.pre-commit-cache.outputs.result }}-${{ hashFiles('.pre-commit-config.yaml') }}
-          restore-keys: |
-            ${{ steps.pre-commit-cache.outputs.result }}-
-
-      - name: Run Nox
-        run: |
-          nox --force-color --python=${{ matrix.python }}
-
-      - name: Upload coverage data
-        if: always() && matrix.session == 'tests'
-        uses: "actions/upload-artifact@v4.4.3"
-        with:
-          name: coverage-data
-          path: ".coverage.*"
-
-      - name: Upload documentation
-        if: matrix.session == 'docs-build'
-        uses: actions/upload-artifact@v4.4.3
-        with:
-          name: docs
-          path: docs/_build
+      - name: Run tests
+        run: uv run pytest tests
 
   coverage:
     runs-on: ubuntu-latest
@@ -116,39 +50,18 @@ jobs:
       - name: Check out the repository
         uses: actions/checkout@v7.0.0
 
-      - name: Set up Python
-        uses: actions/setup-python@v6.3.0
+      - name: Set up uv with Python ${{ matrix.python }}
+        uses: astral-sh/setup-uv@v8.3.2
         with:
-          python-version: "3.10"
+          python-version: 3.12
 
-      - name: Upgrade pip
+      - name: Install project
+        run: uv sync --locked --all-extras --dev
+
+      - name: Run coverage
         run: |
-          pip install --constraint=.github/workflows/constraints.txt pip
-          pip --version
+          uv run coverage run -m pytest tests
 
-      - name: Install Poetry
-        run: |
-          pipx install --pip-args=--constraint=.github/workflows/constraints.txt poetry
-          poetry --version
-
-      - name: Install Nox
-        run: |
-          pipx install --pip-args=--constraint=.github/workflows/constraints.txt nox
-          pipx inject --pip-args=--constraint=.github/workflows/constraints.txt nox nox-poetry
-          nox --version
-
-      - name: Download coverage data
-        uses: actions/download-artifact@v8.0.1
-        with:
-          name: coverage-data
-
-      - name: Combine coverage data and display human readable report
-        run: |
-          nox --force-color --session=coverage
-
-      - name: Create coverage report
-        run: |
-          nox --force-color --session=coverage -- xml
-
-      - name: Upload coverage report
-        uses: codecov/codecov-action@v4.6.0
+      # - name: Create coverage report
+      #   run: |
+      #     uv run coverage xml

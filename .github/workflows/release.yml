@@ -12,66 +12,60 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repository
-        uses: actions/checkout@v7.0.0
+        uses: actions/checkout@v7
         with:
           fetch-depth: 2
 
-      - name: Set up Python
-        uses: actions/setup-python@v6.3.0
-        with:
-          python-version: "3.12"
+      - name: Install uv latest
+        uses: astral-sh/setup-uv@v8.3.2
+        run: uv pip install --upgrade pip
 
-      - name: Upgrade pip
-        run: |
-          pip install --constraint=.github/workflows/constraints.txt pip
-          pip --version
+      - name: Install the project
+        run: uv sync --locked --all-extras --dev
 
-      - name: Install Poetry
-        run: |
-          pip install --constraint=.github/workflows/constraints.txt poetry
-          poetry --version
+      # - name: Check if there is a parent commit
+      #   id: check-parent-commit
+      #   run: |
+      #     echo "::set-output name=sha::$(git rev-parse --verify --quiet HEAD^)"
 
-      - name: Check if there is a parent commit
-        id: check-parent-commit
-        run: |
-          echo "::set-output name=sha::$(git rev-parse --verify --quiet HEAD^)"
+      # TODO: Should we throw an exception here if there's no parent commit?
+      # - name: Detect and tag new version
+      #   id: check-version
+      #   if: steps.check-parent-commit.outputs.sha
+      #   uses: salsify/action-detect-and-tag-new-version@v2.0.3
+      #   with:
+      #     version-command: |
+      #       bash -o pipefail -c "poetry version | awk '{ print \$2 }'"
 
-      - name: Detect and tag new version
-        id: check-version
-        if: steps.check-parent-commit.outputs.sha
-        uses: salsify/action-detect-and-tag-new-version@v2.0.3
-        with:
-          version-command: |
-            bash -o pipefail -c "poetry version | awk '{ print \$2 }'"
-
-      - name: Bump version for developmental release
-        if: "! steps.check-version.outputs.tag"
-        run: |
-          poetry version patch &&
-          version=$(poetry version | awk '{ print $2 }') &&
-          poetry version $version.dev.$(date +%s)
+      # - name: Detect and tag new version
+      #   id: check-version
+      #   if: steps.check-parent-commit.outputs.sha
+        # get current version
+        # get previous version
+        # if current version != previous version,
+        #   form version tag
+        #   if version tag does not exist in repo,
+        #     tag release
+        #   else
+        #     throw exception(?)
 
       - name: Build package
-        run: |
-          poetry build --ansi
+        run: uv build
 
       - name: Publish package on PyPI
-        if: steps.check-version.outputs.tag
-        uses: pypa/gh-action-pypi-publish@v1.14.0
-        with:
-          user: __token__
-          password: ${{ secrets.PYPI_TOKEN }}
+        # if: steps.check-version.outputs.tag
+        run: uv publish --token ${{ secrets.PYPI_TOKEN }}
 
-      - name: Publish package on TestPyPI
-        if: "! steps.check-version.outputs.tag"
-        uses: pypa/gh-action-pypi-publish@v1.14.0
-        with:
-          user: __token__
-          password: ${{ secrets.TEST_PYPI_TOKEN }}
-          repository_url: https://test.pypi.org/legacy/
+      # - name: Bump version for developmental release
+      #   if: "! steps.check-version.outputs.tag"
+      #   run: uv version --bump patch --bump dev=$(date +%s)
+
+      # - name: Publish package on TestPyPI
+      #   if: "! steps.check-version.outputs.tag"
+      #   run: uv publish --token ${{ secrets.TEST_PYPI_TOKEN }} --index testpypi
 
       - name: Publish the release notes
-        uses: release-drafter/release-drafter@v7.5.1
+        uses: release-drafter/release-drafter@v7
         with:
           publish: ${{ steps.check-version.outputs.tag != '' }}
           tag: ${{ steps.check-version.outputs.tag }}

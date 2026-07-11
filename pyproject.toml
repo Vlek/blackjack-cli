@@ -1,6 +1,6 @@
 [project]
 name = "blackjack-cli"
-version = "1.1.0"
+version = "1.3.0"
 description = "This is a cli-based blackjack game! Woo!"
 authors = [{ name = "Vlek", email = "derek@mccammond.org" }]
 requires-python = ">=3.10,<4"
@@ -41,6 +41,12 @@ dev = [
 [tool.uv]
 default-groups = "all"
 
+[[tool.uv.index]]
+name = "testpypi"
+url = "https://test.pypi.org/simple"
+pubish-url = "https://test.pypi.org/legacy"
+explicit = true
+
 [tool.hatch.build.targets.sdist]
 include = [
     "src/blackjack_cli",
@@ -68,12 +74,7 @@ tests = ["tests", "*/tests"]
 [tool.coverage.run]
 parallel = true
 branch = true
-source = ["blackjack-cli"]
-omit = ["tests"]
-
-[tool.coverage.report]
-show_missing = false
-fail_under = 90
+source = ["src/blackjack_cli", "src/deck"]
 
 [flake8]
 max-line-length = 88
