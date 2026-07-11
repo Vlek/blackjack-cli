@@ -45,14 +45,12 @@ jobs:
       - name: Install uv
         run: |
           pipx install uv
-          uv --version
           uv venv --clear
           source .venv/bin/activate
 
       - name: Upgrade pip
         run: |
           uv pip install --upgrade pip
-          uv pip --version
 
       - name: Install package ?
         run: |
@@ -61,7 +59,6 @@ jobs:
       - name: Install Nox
         run: |
           uv pip install nox
-          nox --version
 
       - name: Compute pre-commit cache key
         if: matrix.session == 'pre-commit'
@@ -122,13 +119,11 @@ jobs:
           pipx install uv
           uv venv --clear
           source .venv/bin/activate
-          uv --version
 
       - name: Install Nox
         run: |
           uv pip --upgrade pip
           uv pip install nox
-          nox --version
 
       - name: Download coverage data
         uses: actions/download-artifact@v8.0.1
