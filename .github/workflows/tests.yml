@@ -11,25 +11,33 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version:
-          - "3.12"
+        include:
+          # Perform all checks against latest 3.* python
+          # - { python: "3.x", os: "ubuntu-latest", session: "pre-commit" }
+          # - { python: "3.x", os: "ubuntu-latest", session: "safety" }
+          # - { python: "3.x", os: "ubuntu-latest", session: "xdoctest" }
+          # - { python: "3.x", os: "ubuntu-latest", session: "docs-build" }
+          # - { python: "3.x", os: "ubuntu-latest", session: "mypy" }
+          # - { python: "3.10", os: "ubuntu-latest", session: "typeguard" }
+
+          - { python: "3.x", os: "ubuntu-latest", session: "tests" }
+          # - { python: "3.x", os: "windows-latest", session: "tests" }
+          # - { python: "3.x", os: "macos-latest", session: "tests" }
+
+          # Perform tests in older versions of python
+          # - { python: "3.11", os: "ubuntu-latest", session: "tests" }
+          # - { python: "3.10", os: "ubuntu-latest", session: "tests" }
 
     steps:
       - name: Check out the repository
         uses: actions/checkout@v7.0.0
 
-      - name: Set up Python ${{ matrix.python }}
-        uses: actions/setup-python@v6.3.0
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Install uv latest
+      - name: Set up uv with Python ${{ matrix.python }}
         uses: astral-sh/setup-uv@v8
         with:
-          python-version: ${{ matrix.python-version }}
-        run: uv pip install --upgrade pip
+          python-version: ${{ matrix.python }}
 
-      - name: Install the project
+      - name: Install project
         run: uv sync --locked --all-extras --dev
 
       - name: Run tests
