@@ -46,11 +46,17 @@ jobs:
         run: |
           pipx install uv
           uv --version
+          uv venv --clear
+          source .venv/bin/activate
 
       - name: Upgrade pip
         run: |
           uv pip install --upgrade pip
           uv pip --version
+
+      - name: Install package ?
+        run: |
+          uv pip install -r pyproject.toml
 
       - name: Install Nox
         run: |
@@ -114,10 +120,13 @@ jobs:
       - name: Install uv
         run: |
           pipx install uv
+          uv venv --clear
+          source .venv/bin/activate
           uv --version
 
       - name: Install Nox
         run: |
+          uv pip --upgrade pip
           uv pip install nox
           nox --version
 
