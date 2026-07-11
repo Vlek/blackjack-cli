@@ -17,16 +17,16 @@ jobs:
           fetch-depth: 2
 
       - name: Install uv latest
-        uses: astral-sh/setup-uv@v8
+        uses: astral-sh/setup-uv@v8.3.2
         run: uv pip install --upgrade pip
 
       - name: Install the project
         run: uv sync --locked --all-extras --dev
 
-      - name: Check if there is a parent commit
-        id: check-parent-commit
-        run: |
-          echo "::set-output name=sha::$(git rev-parse --verify --quiet HEAD^)"
+      # - name: Check if there is a parent commit
+      #   id: check-parent-commit
+      #   run: |
+      #     echo "::set-output name=sha::$(git rev-parse --verify --quiet HEAD^)"
 
       # TODO: Should we throw an exception here if there's no parent commit?
       # - name: Detect and tag new version
@@ -37,9 +37,9 @@ jobs:
       #     version-command: |
       #       bash -o pipefail -c "poetry version | awk '{ print \$2 }'"
 
-      - name: Detect and tag new version
-        id: check-version
-        if: steps.check-parent-commit.outputs.sha
+      # - name: Detect and tag new version
+      #   id: check-version
+      #   if: steps.check-parent-commit.outputs.sha
         # get current version
         # get previous version
         # if current version != previous version,
